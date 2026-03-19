@@ -1,0 +1,22 @@
+<% content_for(:title) { "Agent" } %>
+
+<div class="rubyn-page-header">
+  <h1>Agent</h1>
+  <p>Ask anything about your codebase</p>
+</div>
+
+<div class="rubyn-agent-container">
+  <div class="rubyn-chat" id="chat-container">
+    <div class="rubyn-messages" id="messages">
+      <div class="rubyn-empty-chat" id="empty-state">
+        <svg class="rubyn-empty-chat-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <p>Start a conversation with Rubyn</p>
+      </div>
+    </div>
+
+    <form class="rubyn-chat-input" id="chat-form">
+      <textarea id="message-input" placeholder="Ask Rubyn anything about your code..." rows="2"></textarea>
+      <button type="submit" class="rubyn-btn">Send</button>
+    </form>
+  </div>
+</div>

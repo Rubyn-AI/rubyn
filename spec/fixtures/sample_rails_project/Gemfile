@@ -1,0 +1,13 @@
+source "https://rubygems.org"
+
+gem "rails", "~> 7.1"
+gem "pg"
+
+group :development, :test do
+  gem "rspec-rails"
+  gem "factory_bot_rails"
+end
+
+group :development do
+  gem "devise"
+end

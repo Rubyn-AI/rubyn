@@ -1,0 +1,1073 @@
+/* Rubyn Dashboard Styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Matches admin palette: warm dark reds, ruby accents, cream text */
+  --rubyn-bg: #1A1016;
+  --rubyn-surface: #2D1B24;
+  --rubyn-surface-hover: hsl(330, 25%, 14%);
+  --rubyn-surface-raised: #3D2B34;
+  --rubyn-primary: #CC342D;
+  --rubyn-primary-soft: rgba(204, 52, 45, 0.12);
+  --rubyn-primary-glow: rgba(204, 52, 45, 0.3);
+  --rubyn-text: #FFF5F0;
+  --rubyn-text-dim: #A89090;
+  --rubyn-text-muted: #6B5A5A;
+  --rubyn-success: hsl(142, 71%, 45%);
+  --rubyn-success-soft: hsla(142, 71%, 45%, 0.12);
+  --rubyn-warning: hsl(38, 92%, 50%);
+  --rubyn-warning-soft: hsla(38, 92%, 50%, 0.12);
+  --rubyn-border: hsl(330, 15%, 20%);
+  --rubyn-border-subtle: hsl(330, 15%, 16%);
+  --rubyn-radius: 0.75rem;
+  --rubyn-radius-sm: 0.5rem;
+  --rubyn-radius-xs: 0.375rem;
+  --rubyn-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+  --rubyn-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
+  --rubyn-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--rubyn-bg);
+  color: var(--rubyn-text);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---- Layout ---- */
+.rubyn-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.rubyn-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 240px;
+  background: var(--rubyn-surface);
+  border-right: 1px solid var(--rubyn-border-subtle);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.rubyn-sidebar-brand {
+  padding: 1.5rem 1.25rem;
+  border-bottom: 1px solid var(--rubyn-border-subtle);
+}
+
+.rubyn-sidebar-brand a {
+  color: var(--rubyn-primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rubyn-sidebar-brand .rubyn-logo-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+.rubyn-sidebar-nav {
+  flex: 1;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rubyn-sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  color: var(--rubyn-text-dim);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--rubyn-radius-sm);
+  transition: all var(--rubyn-transition);
+}
+
+.rubyn-sidebar-nav a:hover {
+  color: var(--rubyn-text);
+  background: var(--rubyn-surface-hover);
+}
+
+.rubyn-sidebar-nav a.active {
+  color: var(--rubyn-primary);
+  background: var(--rubyn-primary-soft);
+}
+
+.rubyn-sidebar-nav .nav-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.rubyn-sidebar-nav a.active .nav-icon {
+  opacity: 1;
+}
+
+.rubyn-sidebar-footer {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--rubyn-border-subtle);
+  font-size: 0.75rem;
+  color: var(--rubyn-text-muted);
+}
+
+.rubyn-content {
+  margin-left: 240px;
+  flex: 1;
+  min-height: 100vh;
+}
+
+.rubyn-main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+}
+
+/* ---- Page header ---- */
+.rubyn-page-header {
+  margin-bottom: 2rem;
+}
+
+.rubyn-page-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin: 0 0 0.25rem 0;
+}
+
+.rubyn-page-header p {
+  color: var(--rubyn-text-dim);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* ---- Cards ---- */
+.rubyn-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.rubyn-card {
+  background: var(--rubyn-surface);
+  border-radius: var(--rubyn-radius);
+  padding: 1.5rem;
+  border: 1px solid var(--rubyn-border-subtle);
+  box-shadow: var(--rubyn-shadow);
+  transition: all var(--rubyn-transition);
+}
+
+.rubyn-card:hover {
+  border-color: var(--rubyn-border);
+  box-shadow: var(--rubyn-shadow-lg);
+  transform: translateY(-1px);
+}
+
+.rubyn-card h3 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--rubyn-text-dim);
+  margin: 0 0 0.75rem 0;
+}
+
+.rubyn-stat {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--rubyn-text);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.rubyn-stat.primary { color: var(--rubyn-primary); }
+.rubyn-stat.success { color: var(--rubyn-success); }
+
+.rubyn-label {
+  color: var(--rubyn-text-muted);
+  font-size: 0.8125rem;
+  margin-top: 0.25rem;
+}
+
+/* ---- Stat card variants ---- */
+.rubyn-card--credits { border-top: 3px solid var(--rubyn-primary); }
+.rubyn-card--plan { border-top: 3px solid var(--rubyn-success); }
+.rubyn-card--project { border-top: 3px solid var(--rubyn-warning); }
+
+/* ---- Quick Actions ---- */
+.rubyn-actions {
+  margin-top: 2.5rem;
+}
+
+.rubyn-actions h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+}
+
+.rubyn-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.rubyn-action-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: var(--rubyn-surface);
+  border: 1px solid var(--rubyn-border-subtle);
+  border-radius: var(--rubyn-radius);
+  color: var(--rubyn-text);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all var(--rubyn-transition);
+  cursor: pointer;
+}
+
+.rubyn-action-card:hover {
+  border-color: var(--rubyn-primary);
+  background: var(--rubyn-primary-soft);
+  color: var(--rubyn-text);
+}
+
+.rubyn-action-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--rubyn-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+.rubyn-action-icon--files { background: var(--rubyn-primary-soft); color: var(--rubyn-primary); }
+.rubyn-action-icon--agent { background: var(--rubyn-success-soft); color: var(--rubyn-success); }
+.rubyn-action-icon--settings { background: var(--rubyn-warning-soft); color: var(--rubyn-warning); }
+
+/* ---- Buttons ---- */
+.rubyn-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--rubyn-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--rubyn-radius-xs);
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all var(--rubyn-transition);
+  letter-spacing: 0.01em;
+}
+
+.rubyn-btn:hover {
+  background: #9B1B30;
+  box-shadow: 0 0 16px var(--rubyn-primary-glow);
+}
+
+.rubyn-btn--ghost {
+  background: transparent;
+  color: var(--rubyn-text-dim);
+  border: 1px solid var(--rubyn-border);
+}
+
+.rubyn-btn--ghost:hover {
+  color: var(--rubyn-text);
+  border-color: var(--rubyn-text-dim);
+  background: var(--rubyn-surface-hover);
+  box-shadow: none;
+}
+
+.rubyn-btn-sm {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: inherit;
+  background: transparent;
+  color: var(--rubyn-text-dim);
+  border: 1px solid var(--rubyn-border);
+  border-radius: var(--rubyn-radius-xs);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--rubyn-transition);
+}
+
+.rubyn-btn-sm:hover {
+  color: var(--rubyn-primary);
+  border-color: var(--rubyn-primary);
+  background: var(--rubyn-primary-soft);
+}
+
+/* ---- File list ---- */
+.rubyn-file-list {
+  background: var(--rubyn-surface);
+  border: 1px solid var(--rubyn-border-subtle);
+  border-radius: var(--rubyn-radius);
+  overflow: hidden;
+  box-shadow: var(--rubyn-shadow);
+}
+
+.rubyn-file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--rubyn-border-subtle);
+  transition: background var(--rubyn-transition);
+}
+
+.rubyn-file-item:last-child {
+  border-bottom: none;
+}
+
+.rubyn-file-item:hover {
+  background: var(--rubyn-surface-hover);
+}
+
+.rubyn-file-name {
+  font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.8125rem;
+  color: var(--rubyn-text);
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.rubyn-file-icon {
+  color: var(--rubyn-primary);
+  font-size: 1rem;
+  opacity: 0.7;
+}
+
+.rubyn-file-actions {
+  display: flex;
+  gap: 0.375rem;
+  opacity: 0;
+  transition: opacity var(--rubyn-transition);
+}
+
+.rubyn-file-item:hover .rubyn-file-actions {
+  opacity: 1;
+}
+
+/* ---- File categories ---- */
+.rubyn-file-category {
+  margin-bottom: 1rem;
+}
+
+.rubyn-file-category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  background: var(--rubyn-surface);
+  border: 1px solid var(--rubyn-border-subtle);
+  border-radius: var(--rubyn-radius) var(--rubyn-radius) 0 0;
+  color: var(--rubyn-text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all var(--rubyn-transition);
+}
+
+.rubyn-file-category-header:hover {
+  background: var(--rubyn-surface-hover);
+}
+
+.rubyn-file-category-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rubyn-file-category-chevron {
+  transition: transform var(--rubyn-transition);
+}
+
+.rubyn-file-category-chevron--collapsed {
+  transform: rotate(-90deg);
+}
+
+.rubyn-file-category-count {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--rubyn-text-muted);
+  background: var(--rubyn-surface-raised);
+  padding: 0.125rem 0.5rem;
+  border-radius: 100px;
+}
+
+.rubyn-file-category .rubyn-file-list {
+  border-top: none;
+  border-radius: 0 0 var(--rubyn-radius) var(--rubyn-radius);
+  transition: max-height 200ms ease, opacity 200ms ease;
+  max-height: 2000px;
+  overflow: hidden;
+  opacity: 1;
+}
+
+.rubyn-file-list--collapsed {
+  max-height: 0 !important;
+  opacity: 0 !important;
+  border-width: 0 1px !important;
+}
+
+/* ---- Chat / Agent ---- */
+.rubyn-agent-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 8rem);
+}
+
+.rubyn-chat {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.rubyn-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  background: var(--rubyn-surface);
+  border: 1px solid var(--rubyn-border-subtle);
+  border-radius: var(--rubyn-radius);
+  margin-bottom: 1rem;
+  box-shadow: var(--rubyn-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.rubyn-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.rubyn-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.rubyn-messages::-webkit-scrollbar-thumb {
+  background: var(--rubyn-border);
+  border-radius: 3px;
+}
+
+.rubyn-message {
+  max-width: 80%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--rubyn-radius);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  animation: messageIn 200ms ease-out;
+}
+
+@keyframes messageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.rubyn-message-you {
+  align-self: flex-end;
+  background: var(--rubyn-primary);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.rubyn-message-rubyn {
+  align-self: flex-start;
+  background: var(--rubyn-surface-raised);
+  border: 1px solid var(--rubyn-border-subtle);
+  border-bottom-left-radius: 4px;
+}
+
+.rubyn-message-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+  opacity: 0.6;
+}
+
+.rubyn-message-body {
+  word-wrap: break-word;
+}
+
+.rubyn-chat-input {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.rubyn-chat-input textarea {
+  flex: 1;
+  background: var(--rubyn-surface);
+  color: var(--rubyn-text);
+  border: 1px solid var(--rubyn-border);
+  border-radius: var(--rubyn-radius-sm);
+  padding: 0.75rem 1rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  resize: none;
+  transition: border-color var(--rubyn-transition);
+  line-height: 1.5;
+}
+
+.rubyn-chat-input textarea::placeholder {
+  color: var(--rubyn-text-muted);
+}
+
+.rubyn-chat-input textarea:focus {
+  outline: none;
+  border-color: var(--rubyn-primary);
+  box-shadow: 0 0 0 3px var(--rubyn-primary-soft);
+}
+
+.rubyn-chat-input .rubyn-btn {
+  padding: 0.75rem 1.25rem;
+  align-self: flex-end;
+}
+
+/* ---- Empty state ---- */
+.rubyn-empty-chat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  color: var(--rubyn-text-muted);
+  gap: 0.75rem;
+  padding: 3rem;
+}
+
+.rubyn-empty-chat-icon {
+  font-size: 2.5rem;
+  opacity: 0.4;
+}
+
+.rubyn-empty-chat p {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+/* ---- Tool pages (refactor, spec, review) ---- */
+.rubyn-tool-container {
+  background: var(--rubyn-surface);
+  border: 1px solid var(--rubyn-border-subtle);
+  border-radius: var(--rubyn-radius);
+  box-shadow: var(--rubyn-shadow);
+  overflow: hidden;
+}
+
+.rubyn-tool-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--rubyn-border-subtle);
+  background: var(--rubyn-surface-hover);
+}
+
+.rubyn-tool-filepath {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8125rem;
+  color: var(--rubyn-text-dim);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rubyn-tool-body {
+  padding: 1.5rem;
+  min-height: 300px;
+}
+
+.rubyn-tool-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  color: var(--rubyn-text-dim);
+}
+
+.rubyn-tool-empty p {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.875rem;
+}
+
+.rubyn-tool-empty a {
+  color: var(--rubyn-primary);
+  text-decoration: none;
+}
+
+.rubyn-tool-empty a:hover {
+  text-decoration: underline;
+}
+
+/* ---- Tool output ---- */
+.rubyn-tool-output {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  color: var(--rubyn-text);
+}
+
+.rubyn-tool-output code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* Highlight.js overrides to match theme */
+.rubyn-tool-output code.hljs {
+  background: transparent;
+  padding: 0;
+}
+
+.rubyn-message-body pre {
+  margin: 0.5rem 0;
+  border-radius: var(--rubyn-radius-sm);
+  overflow-x: auto;
+}
+
+.rubyn-message-body pre code.hljs {
+  padding: 0.75rem 1rem;
+  border-radius: var(--rubyn-radius-sm);
+}
+
+/* ---- Tool actions ---- */
+.rubyn-tool-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--rubyn-border-subtle);
+  background: var(--rubyn-surface-hover);
+}
+
+.rubyn-btn--success {
+  background: var(--rubyn-success);
+  cursor: default;
+}
+
+.rubyn-btn--success:hover {
+  background: var(--rubyn-success);
+  box-shadow: none;
+}
+
+/* ---- Code blocks ---- */
+.rubyn-code-block {
+  border: 1px solid var(--rubyn-border-subtle);
+  border-radius: var(--rubyn-radius-sm);
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+}
+
+.rubyn-code-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background: var(--rubyn-surface-hover);
+  border-bottom: 1px solid var(--rubyn-border-subtle);
+  font-size: 0.8125rem;
+}
+
+.rubyn-code-block-actions {
+  display: flex;
+  gap: 0.375rem;
+}
+
+.rubyn-file-tag {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-right: 0.5rem;
+}
+
+.rubyn-tag-new {
+  background: var(--rubyn-success-soft);
+  color: var(--rubyn-success);
+}
+
+.rubyn-code-block .rubyn-tool-output {
+  margin: 0;
+  padding: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* ---- Collapsible explanation ---- */
+.rubyn-explanation {
+  transition: max-height 300ms ease, opacity 300ms ease;
+  max-height: 5000px;
+  opacity: 1;
+  overflow: hidden;
+}
+
+.rubyn-explanation--collapsed {
+  max-height: 0;
+  opacity: 0;
+  padding: 0;
+}
+
+/* ---- Feedback ---- */
+.rubyn-feedback {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-top: 1px solid var(--rubyn-border-subtle);
+}
+
+.rubyn-feedback-label {
+  font-size: 0.8125rem;
+  color: var(--rubyn-text-dim);
+}
+
+.rubyn-feedback-thanks {
+  color: var(--rubyn-success);
+}
+
+.rubyn-feedback-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--rubyn-border);
+  border-radius: var(--rubyn-radius-xs);
+  background: transparent;
+  color: var(--rubyn-text-dim);
+  cursor: pointer;
+  transition: all var(--rubyn-transition);
+}
+
+.rubyn-feedback-btn:hover {
+  color: var(--rubyn-primary);
+  border-color: var(--rubyn-primary);
+  background: var(--rubyn-primary-soft);
+}
+
+.rubyn-feedback-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ---- Tool footer (credits + feedback) ---- */
+.rubyn-tool-footer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-top: 1px solid var(--rubyn-border-subtle);
+}
+
+.rubyn-credits-badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--rubyn-primary);
+  background: var(--rubyn-primary-soft);
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--rubyn-radius-xs);
+  white-space: nowrap;
+}
+
+/* ---- Usage table ---- */
+.rubyn-usage-section {
+  margin-bottom: 2rem;
+}
+
+.rubyn-usage-section h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+}
+
+.rubyn-usage-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+  background: var(--rubyn-surface);
+  border: 1px solid var(--rubyn-border-subtle);
+  border-radius: var(--rubyn-radius);
+  overflow: hidden;
+}
+
+.rubyn-usage-table th {
+  text-align: left;
+  padding: 0.625rem 1rem;
+  font-weight: 600;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--rubyn-text-dim);
+  background: var(--rubyn-surface-hover);
+  border-bottom: 1px solid var(--rubyn-border-subtle);
+}
+
+.rubyn-usage-table td {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--rubyn-border-subtle);
+}
+
+.rubyn-usage-table tr:last-child td {
+  border-bottom: none;
+}
+
+.rubyn-usage-command {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  background: var(--rubyn-primary-soft);
+  color: var(--rubyn-primary);
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--rubyn-radius-xs);
+}
+
+.rubyn-text-dim {
+  color: var(--rubyn-text-dim);
+}
+
+/* ---- Loading spinner ---- */
+.rubyn-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--rubyn-text-dim);
+  font-size: 0.875rem;
+}
+
+.rubyn-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--rubyn-border);
+  border-top-color: var(--rubyn-primary);
+  border-radius: 50%;
+  animation: spin 600ms linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- Pulse dots loading ---- */
+.rubyn-dots {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.rubyn-dots span {
+  width: 6px;
+  height: 6px;
+  background: var(--rubyn-text-dim);
+  border-radius: 50%;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.rubyn-dots span:nth-child(2) { animation-delay: 0.2s; }
+.rubyn-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes pulse {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1); }
+}
+
+/* ---- Settings ---- */
+.rubyn-settings-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.rubyn-setting-card {
+  background: var(--rubyn-surface);
+  border: 1px solid var(--rubyn-border-subtle);
+  border-radius: var(--rubyn-radius);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--rubyn-shadow);
+}
+
+.rubyn-setting-card h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+}
+
+.rubyn-setting-card p {
+  font-size: 0.8125rem;
+  color: var(--rubyn-text-dim);
+  margin: 0;
+}
+
+.rubyn-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.625rem;
+  border-radius: 100px;
+  margin-top: 0.5rem;
+}
+
+.rubyn-status-badge--ok {
+  background: var(--rubyn-success-soft);
+  color: var(--rubyn-success);
+}
+
+.rubyn-status-badge--warn {
+  background: var(--rubyn-warning-soft);
+  color: var(--rubyn-warning);
+}
+
+.rubyn-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.rubyn-form-group {
+  margin: 1.25rem 0;
+}
+
+.rubyn-form-group label {
+  display: block;
+  margin-bottom: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--rubyn-text-dim);
+}
+
+.rubyn-form-group select,
+.rubyn-form-group input[type="text"] {
+  background: var(--rubyn-bg);
+  color: var(--rubyn-text);
+  border: 1px solid var(--rubyn-border);
+  border-radius: var(--rubyn-radius-xs);
+  padding: 0.5rem 0.75rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  transition: border-color var(--rubyn-transition);
+}
+
+.rubyn-form-group select:focus,
+.rubyn-form-group input[type="text"]:focus {
+  outline: none;
+  border-color: var(--rubyn-primary);
+  box-shadow: 0 0 0 3px var(--rubyn-primary-soft);
+}
+
+.rubyn-form-group input[type="checkbox"] {
+  accent-color: var(--rubyn-primary);
+}
+
+/* ---- Update banner ---- */
+.rubyn-update-banner {
+  background: var(--rubyn-primary-soft);
+  color: var(--rubyn-primary);
+  padding: 0.75rem 1rem;
+  border-radius: var(--rubyn-radius-sm);
+  margin-bottom: 1.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: 1px solid rgba(204, 52, 45, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: noticeIn 300ms ease-out;
+}
+
+/* ---- Notice ---- */
+.rubyn-notice {
+  background: var(--rubyn-success-soft);
+  color: var(--rubyn-success);
+  padding: 0.75rem 1rem;
+  border-radius: var(--rubyn-radius-sm);
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid rgba(78, 204, 163, 0.2);
+  animation: noticeIn 300ms ease-out;
+}
+
+@keyframes noticeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Code ---- */
+code {
+  font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+  background: var(--rubyn-surface-raised);
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--rubyn-radius-xs);
+  font-size: 0.8125rem;
+  border: 1px solid var(--rubyn-border-subtle);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .rubyn-sidebar {
+    display: none;
+  }
+
+  .rubyn-content {
+    margin-left: 0;
+  }
+
+  .rubyn-mobile-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: var(--rubyn-surface);
+    border-bottom: 1px solid var(--rubyn-border-subtle);
+  }
+}

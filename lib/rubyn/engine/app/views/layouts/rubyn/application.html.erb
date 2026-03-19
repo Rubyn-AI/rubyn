@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rubyn - <%= yield(:title) || "Dashboard" %></title>
+  <%= stylesheet_link_tag "rubyn/application", media: "all" %>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/ruby.min.js"></script>
+  <%= javascript_include_tag "rubyn/application" %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+  <div class="rubyn-shell">
+    <aside class="rubyn-sidebar">
+      <div class="rubyn-sidebar-brand">
+        <%= link_to rubyn.root_path do %>
+          <%= image_tag "rubyn/RubynLogo.png", class: "rubyn-logo-img", alt: "Rubyn" %> Rubyn
+        <% end %>
+      </div>
+
+      <nav class="rubyn-sidebar-nav">
+        <%= link_to rubyn.root_path, class: ("active" if current_page?(rubyn.root_path)) do %>
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Dashboard
+        <% end %>
+        <%= link_to rubyn.files_path, class: ("active" if current_page?(rubyn.files_path)) do %>
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+          Files
+        <% end %>
+        <%= link_to rubyn.agent_path, class: ("active" if current_page?(rubyn.agent_path)) do %>
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Agent
+        <% end %>
+        <%= link_to rubyn.settings_path, class: ("active" if current_page?(rubyn.settings_path)) do %>
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Settings
+        <% end %>
+      </nav>
+
+      <div class="rubyn-sidebar-footer">
+        Rubyn v<%= Rubyn::VERSION %>
+      </div>
+    </aside>
+
+    <div class="rubyn-content">
+      <main class="rubyn-main">
+        <% if @update_message %>
+          <div class="rubyn-update-banner">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <%= @update_message %>
+          </div>
+        <% end %>
+        <% if notice %>
+          <div class="rubyn-notice"><%= notice %></div>
+        <% end %>
+        <%= yield %>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

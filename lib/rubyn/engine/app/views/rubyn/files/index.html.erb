@@ -1,0 +1,45 @@
+<% content_for(:title) { "Files" } %>
+
+<div class="rubyn-page-header">
+  <h1>Project Files</h1>
+  <p><%= @total_count %> files found across <%= @categories.size %> categories</p>
+</div>
+
+<% @categories.each do |category, files| %>
+  <div class="rubyn-file-category">
+    <button class="rubyn-file-category-header" onclick="toggleCategory(this)">
+      <span class="rubyn-file-category-title">
+        <svg class="rubyn-file-category-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <%= category %>
+      </span>
+      <span class="rubyn-file-category-count"><%= files.size %></span>
+    </button>
+
+    <div class="rubyn-file-list">
+      <% files.each do |file| %>
+        <div class="rubyn-file-item">
+          <span class="rubyn-file-name">
+            <svg class="rubyn-file-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <%= file %>
+          </span>
+          <% if file.end_with?(".rb") %>
+            <div class="rubyn-file-actions">
+              <%= link_to "Refactor", rubyn.refactor_path(file: file), class: "rubyn-btn-sm", target: "_blank" %>
+              <%= link_to "Spec", rubyn.specs_path(file: file), class: "rubyn-btn-sm", target: "_blank" %>
+              <%= link_to "Review", rubyn.reviews_path(file: file), class: "rubyn-btn-sm", target: "_blank" %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<script>
+  function toggleCategory(button) {
+    var list = button.nextElementSibling;
+    var chevron = button.querySelector(".rubyn-file-category-chevron");
+    list.classList.toggle("rubyn-file-list--collapsed");
+    chevron.classList.toggle("rubyn-file-category-chevron--collapsed");
+  }
+</script>

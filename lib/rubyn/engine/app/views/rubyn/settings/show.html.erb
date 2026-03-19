@@ -1,0 +1,42 @@
+<% content_for(:title) { "Settings" } %>
+
+<div class="rubyn-page-header">
+  <h1>Settings</h1>
+  <p>Configure your Rubyn installation</p>
+</div>
+
+<div class="rubyn-settings-grid">
+  <div class="rubyn-setting-card">
+    <h3>API Key</h3>
+    <p>Authentication status for the Rubyn API</p>
+    <% if @credentials_exist %>
+      <span class="rubyn-status-badge rubyn-status-badge--ok">
+        <span class="rubyn-status-dot"></span> Configured
+      </span>
+    <% else %>
+      <span class="rubyn-status-badge rubyn-status-badge--warn">
+        <span class="rubyn-status-dot"></span> Not configured
+      </span>
+    <% end %>
+  </div>
+
+  <div class="rubyn-setting-card">
+    <h3>Preferences</h3>
+
+    <%= form_tag rubyn.settings_path, method: :patch do %>
+      <div class="rubyn-form-group">
+        <label>Output Format</label>
+        <%= select_tag :output_format, options_for_select(["diff", "full"], @settings["output_format"]) %>
+      </div>
+
+      <div class="rubyn-form-group">
+        <label>
+          <%= check_box_tag :auto_apply, "true", @settings["auto_apply"] %>
+          Auto-apply changes
+        </label>
+      </div>
+
+      <%= submit_tag "Save", class: "rubyn-btn" %>
+    <% end %>
+  </div>
+</div>
