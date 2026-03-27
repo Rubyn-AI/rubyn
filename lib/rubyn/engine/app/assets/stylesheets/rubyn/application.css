@@ -735,6 +735,11 @@ body {
   color: var(--rubyn-success);
 }
 
+.rubyn-tag-updated {
+  background: var(--rubyn-primary-soft);
+  color: var(--rubyn-primary);
+}
+
 
 .rubyn-code-block .rubyn-tool-output {
   margin: 0;

@@ -324,21 +324,23 @@ console.log("\n=== UI renders correct badge ===");
   var fileChanges = codeBlocks.map(function(code, i) {
     var header = headers[i];
     var path = (header && header.path) ? header.path : file;
-    var isNew = header && header.tag === "new";
-    return { path: path, isNew: isNew, code: code };
+    var tag = header ? header.tag : null;
+    return { path: path, tag: tag, code: code };
   });
 
   assertEqual(fileChanges.length, 2, "two file changes");
   assertEqual(fileChanges[0].path, "app/services/post_analytics_service.rb", "first is original file");
-  assertEqual(fileChanges[0].isNew, false, "updated file is NOT marked new");
+  assertEqual(fileChanges[0].tag, "updated", "first file has updated tag");
   assertEqual(fileChanges[1].path, "app/services/engagement_scorer.rb", "second is extracted file");
-  assertEqual(fileChanges[1].isNew, true, "new file IS marked new");
+  assertEqual(fileChanges[1].tag, "new", "second file has new tag");
 
-  // Simulate badge rendering
+  // Simulate badge rendering (matches application.js logic)
   var badges = fileChanges.map(function(c) {
-    return c.isNew ? "NEW" : null;
+    if (c.tag === "new") return "NEW";
+    if (c.tag === "updated" || c.tag === "modified") return "UPDATED";
+    return null;
   });
-  assertEqual(badges[0], null, "no badge on updated file");
+  assertEqual(badges[0], "UPDATED", "UPDATED badge on updated file");
   assertEqual(badges[1], "NEW", "NEW badge on new file");
 })();
 
@@ -385,12 +387,18 @@ console.log("\n=== Does not match bold .rb references in prose ===");
   var fileChanges = codeBlocks.map(function(code, i) {
     var header = headers[i];
     var path = (header && header.path) ? header.path : file;
-    var isNew = header && header.tag === "new";
-    return { path: path, isNew: isNew };
+    var tag = header ? header.tag : null;
+    return { path: path, tag: tag };
   });
 
-  assertEqual(fileChanges[0].isNew, false, "updated file is NOT marked new");
-  assertEqual(fileChanges[1].isNew, true, "new file IS marked new");
+  // Simulate badge rendering
+  var badges = fileChanges.map(function(c) {
+    if (c.tag === "new") return "NEW";
+    if (c.tag === "updated" || c.tag === "modified") return "UPDATED";
+    return null;
+  });
+  assertEqual(badges[0], "UPDATED", "UPDATED badge on updated file (not affected by prose)");
+  assertEqual(badges[1], "NEW", "NEW badge on new file (not affected by prose)");
 })();
 
 // ---- Summary ----
