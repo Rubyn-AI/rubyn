@@ -128,17 +128,26 @@ module Rubyn
       def get(path, params = {})
         response = connection.get(path, params)
         parse_response(response)
+      rescue Faraday::ConnectionFailed, Faraday::TimeoutError => e
+        raise APIError, "Could not connect to #{@base_url} — #{e.message}"
       end
 
       def post(path, body = {})
         response = connection.post(path, body)
         parse_response(response)
+      rescue Faraday::ConnectionFailed, Faraday::TimeoutError => e
+        raise APIError, "Could not connect to #{@base_url} — #{e.message}"
       end
 
       def parse_response(response)
-        return response.body if response.status.between?(200, 299)
+        json_body = response.body.is_a?(Hash) || response.body.is_a?(Array)
 
-        message = extract_error_message(response)
+        if response.status.between?(200, 299)
+          raise APIError, "Unexpected response from server (status #{response.status}). Expected JSON but got #{response.headers["content-type"] || "unknown content type"}." unless json_body
+          return response.body
+        end
+
+        message = json_body ? extract_error_message(response) : nil
 
         case response.status
         when 400
