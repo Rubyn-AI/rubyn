@@ -3,7 +3,7 @@
 module Rubyn
   module Context
     class ResponseParser
-      BOLD_HEADER = /\*\*(?:(?:New|Updated|Modified)\s*(?:file)?:\s*)?([a-zA-Z0-9_\/\.\-]+\.rb)\*\*/i
+      BOLD_HEADER = /\*\*(?:New|Updated|Modified)\s*(?:file)?:\s*([a-zA-Z0-9_\/\.\-]+\.rb)\*\*/i
       BACKTICK_PATH = /`([a-zA-Z0-9_\/\.\-]+\.rb)`\s*\z/
       INLINE_COMMENT = /^#\s*([a-zA-Z0-9_\/\.\-]+\.rb)/
 

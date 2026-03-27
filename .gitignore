@@ -84,6 +84,20 @@ yarn-debug.log*
 
 # IDE files
 .idea/
+.vscode/
 
 # Local env overrides (keep .env.dev as template)
 .env*.local
+
+# Dummy app artifacts
+spec/dummy/log/
+spec/dummy/tmp/
+spec/dummy/db/*.sqlite3
+spec/dummy/db/*.sqlite3-journal
+spec/dummy/storage/
+
+# SimpleCov
+coverage/
+
+# OS files
+.DS_Store

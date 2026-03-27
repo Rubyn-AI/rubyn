@@ -396,5 +396,45 @@ RSpec.describe Rubyn::Context::ResponseParser do
         expect(is_new).to be true
       end
     end
+
+    context "does not match bold .rb references in prose" do
+      let(:response) do
+        <<~RESPONSE
+          **Updated file: app/services/post_analytics_service.rb**
+
+          ```ruby
+          class PostAnalyticsService
+            def score
+              EngagementScorer.new.compute
+            end
+          end
+          ```
+
+          **New file: app/services/engagement_scorer.rb**
+
+          ```ruby
+          class EngagementScorer
+            def compute
+              42
+            end
+          end
+          ```
+
+          **Why**
+
+          - Extracted **app/services/engagement_scorer.rb** for single responsibility
+          - The **post_analytics_service.rb** is now a thin wrapper
+        RESPONSE
+      end
+
+      it "extracts exactly two blocks, not more" do
+        expect(blocks.length).to eq(2)
+      end
+
+      it "does not create phantom headers from Why section" do
+        expect(blocks[0][:path]).to eq("app/services/post_analytics_service.rb")
+        expect(blocks[1][:path]).to eq("app/services/engagement_scorer.rb")
+      end
+    end
   end
 end
