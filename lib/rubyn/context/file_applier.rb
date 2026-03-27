@@ -18,14 +18,6 @@ module Rubyn
         end
       end
 
-      def new_file?(path)
-        return false unless path
-
-        path != @original_file &&
-          !path.end_with?("/#{@original_file}") &&
-          !@original_file.end_with?("/#{path}")
-      end
-
       private
 
       def apply_single(code)
@@ -50,7 +42,7 @@ module Rubyn
         @formatter.info("This refactor produces #{file_blocks.length} file(s):")
         file_blocks.each do |block|
           path = block[:path] || @original_file
-          label = new_file?(path) ? "NEW" : "MODIFIED"
+          label = block[:tag] == "new" ? "NEW" : "MODIFIED"
           @formatter.info("  [#{label}] #{path}")
         end
 
@@ -69,7 +61,7 @@ module Rubyn
 
       def apply_selected(block)
         path = block[:path] || @original_file
-        label = new_file?(path) ? "NEW" : "MODIFIED"
+        label = block[:tag] == "new" ? "NEW" : "MODIFIED"
         print "  Apply [#{label}] #{path}? (y/n/diff) "
         choice = $stdin.gets&.strip&.downcase
 
@@ -77,7 +69,7 @@ module Rubyn
         when "y"
           write_block(block)
         when "diff"
-          existing = new_file?(path) ? "" : File.read(resolve_path(block))
+          existing = block[:tag] == "new" ? "" : File.read(resolve_path(block))
           Rubyn::Output::DiffRenderer.render(original: existing, modified: block[:code])
           print "  Apply? (y/n) "
           write_block(block) if $stdin.gets&.strip&.downcase == "y"

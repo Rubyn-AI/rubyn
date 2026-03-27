@@ -13,26 +13,8 @@ RSpec.describe Rubyn::Context::FileApplier do
 
   after { FileUtils.rm_rf(tmpdir) }
 
-  describe "#new_file?" do
-    it "returns false for the original file" do
-      expect(applier.new_file?(original_file)).to be false
-    end
-
-    it "returns true for a different path" do
-      expect(applier.new_file?("app/services/engagement_scorer.rb")).to be true
-    end
-
-    it "returns false for nil" do
-      expect(applier.new_file?(nil)).to be false
-    end
-
-    it "returns false when path ends with original file" do
-      expect(applier.new_file?("/some/root/#{original_file}")).to be false
-    end
-  end
-
   describe "#apply with single file block" do
-    let(:file_blocks) { [{ path: nil, code: "class PostAnalyticsService\n  def score\n    42\n  end\nend\n" }] }
+    let(:file_blocks) { [{ path: nil, tag: nil, code: "class PostAnalyticsService\n  def score\n    42\n  end\nend\n" }] }
 
     it "writes the code to the original file when user confirms" do
       allow($stdin).to receive(:gets).and_return("y\n")
@@ -65,8 +47,8 @@ RSpec.describe Rubyn::Context::FileApplier do
     let(:new_file_path) { "app/services/engagement_scorer.rb" }
     let(:file_blocks) do
       [
-        { path: original_file, code: "class PostAnalyticsService\n  def delegate\n    EngagementScorer.new\n  end\nend\n" },
-        { path: new_file_path, code: "class EngagementScorer\n  def compute\n    42\n  end\nend\n" }
+        { path: original_file, tag: "updated", code: "class PostAnalyticsService\n  def delegate\n    EngagementScorer.new\n  end\nend\n" },
+        { path: new_file_path, tag: "new", code: "class EngagementScorer\n  def compute\n    42\n  end\nend\n" }
       ]
     end
 
@@ -87,7 +69,7 @@ RSpec.describe Rubyn::Context::FileApplier do
       allow(Dir).to receive(:pwd).and_return(tmpdir)
 
       deep_path = "app/services/posts/scoring/engagement_scorer.rb"
-      blocks = [{ path: deep_path, code: "class Scorer\nend\n" }]
+      blocks = [{ path: deep_path, tag: "new", code: "class Scorer\nend\n" }]
       applier.apply(blocks)
 
       expect(File.exist?(File.join(tmpdir, deep_path))).to be true

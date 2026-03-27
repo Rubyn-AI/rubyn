@@ -3,7 +3,7 @@
 module Rubyn
   module Context
     class ResponseParser
-      BOLD_HEADER = /\*\*(?:New|Updated|Modified)\s*(?:file)?:\s*([a-zA-Z0-9_\/\.\-]+\.rb)\*\*/i
+      BOLD_HEADER = /\*\*(New|Updated|Modified)\s*(?:file)?:\s*([a-zA-Z0-9_\/\.\-]+\.rb)\*\*/i
       BACKTICK_PATH = /`([a-zA-Z0-9_\/\.\-]+\.rb)`\s*\z/
       INLINE_COMMENT = /^#\s*([a-zA-Z0-9_\/\.\-]+\.rb)/
 
@@ -24,9 +24,9 @@ module Rubyn
 
           code = part.sub(/\A```ruby\n/, "").sub(/```\z/, "")
           preceding = i > 0 ? parts[i - 1] : ""
-          path = detect_path(preceding, code)
+          result = detect_path(preceding, code)
 
-          blocks << { path: path, code: code }
+          blocks << { path: result[:path], tag: result[:tag], code: code }
         end
 
         blocks
@@ -37,19 +37,29 @@ module Rubyn
       def detect_path(preceding_text, code)
         match_bold_header(preceding_text) ||
           match_backtick_path(preceding_text) ||
-          match_inline_comment(code)
+          match_inline_comment(code) ||
+          { path: nil, tag: nil }
       end
 
       def match_bold_header(text)
-        text.match(BOLD_HEADER)&.[](1)
+        m = text.match(BOLD_HEADER)
+        return nil unless m
+
+        { path: m[2], tag: m[1].downcase }
       end
 
       def match_backtick_path(text)
-        text.match(BACKTICK_PATH)&.[](1)
+        m = text.match(BACKTICK_PATH)
+        return nil unless m
+
+        { path: m[1], tag: nil }
       end
 
       def match_inline_comment(code)
-        code.lines.first&.strip&.match(INLINE_COMMENT)&.[](1)
+        m = code.lines.first&.strip&.match(INLINE_COMMENT)
+        return nil unless m
+
+        { path: m[1], tag: nil }
       end
     end
   end

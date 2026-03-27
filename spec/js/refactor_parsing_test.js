@@ -36,10 +36,11 @@ function extractFileHeaders(text) {
     var code = parts[i].replace(/^```ruby\n/, "").replace(/```$/, "");
     var preceding = i > 0 ? parts[i - 1] : "";
     var path = null;
+    var tag = null;
 
     // Strategy 1: Bold header (requires New/Updated/Modified prefix)
-    var boldMatch = preceding.match(/\*\*(?:New|Updated|Modified)\s*(?:file)?:\s*([a-zA-Z0-9_\/\.\-]+\.rb)\*\*/i);
-    if (boldMatch) path = boldMatch[1];
+    var boldMatch = preceding.match(/\*\*(New|Updated|Modified)\s*(?:file)?:\s*([a-zA-Z0-9_\/\.\-]+\.rb)\*\*/i);
+    if (boldMatch) { tag = boldMatch[1].toLowerCase(); path = boldMatch[2]; }
 
     // Strategy 2: Backtick-wrapped path
     if (!path) {
@@ -54,7 +55,7 @@ function extractFileHeaders(text) {
       if (commentMatch) path = commentMatch[1];
     }
 
-    headers.push({ path: path });
+    headers.push({ path: path, tag: tag });
   }
 
   return headers;
@@ -70,9 +71,6 @@ function extractCodeBlocks(text) {
   return blocks;
 }
 
-function isNewFile(path, originalFile) {
-  return !!(path && originalFile && path !== originalFile && path.indexOf(originalFile) === -1 && originalFile.indexOf(path) === -1);
-}
 
 // ---- Tests ----
 
@@ -114,12 +112,10 @@ console.log("\n=== Bold Updated/New file headers ===");
   assertEqual(codeBlocks.length, 2, "extracts two code blocks");
   assertEqual(headers[0].path, "app/services/post_analytics_service.rb", "updated file path correct");
   assertEqual(headers[1].path, "app/services/engagement_scorer.rb", "new file path correct");
+  assertEqual(headers[0].tag, "updated", "first file tagged as updated");
+  assertEqual(headers[1].tag, "new", "second file tagged as new");
   assert(codeBlocks[0].indexOf("PostAnalyticsService") !== -1, "first code block has updated class");
   assert(codeBlocks[1].indexOf("EngagementScorer") !== -1, "second code block has new class");
-
-  var file = "app/services/post_analytics_service.rb";
-  assertEqual(isNewFile(headers[0].path, file), false, "updated file is NOT new");
-  assertEqual(isNewFile(headers[1].path, file), true, "extracted file IS new");
 })();
 
 console.log("\n=== Full production response ===");
@@ -295,14 +291,12 @@ console.log("\n=== Mixed formats ===");
   assertEqual(headers[1].path, "app/services/engagement_scorer.rb", "inline comment fallback works");
 })();
 
-console.log("\n=== isNew detection ===");
+console.log("\n=== isNew uses tag not path comparison ===");
 (function() {
-  var file = "app/services/post_analytics_service.rb";
-
-  assertEqual(isNewFile("app/services/post_analytics_service.rb", file), false, "same path is not new");
-  assertEqual(isNewFile("app/services/engagement_scorer.rb", file), true, "different path is new");
-  assertEqual(isNewFile(null, file), false, "null path is not new");
-  assertEqual(isNewFile("app/services/post_analytics_service.rb", null), false, "null file is not new");
+  assertEqual(true, { tag: "new" }.tag === "new", "tag 'new' means new file");
+  assertEqual(false, { tag: "updated" }.tag === "new", "tag 'updated' means not new");
+  assertEqual(false, { tag: null }.tag === "new", "null tag means not new");
+  assertEqual(false, (null && null.tag === "new") || false, "null header means not new");
 })();
 
 console.log("\n=== UI renders correct badge ===");
@@ -330,21 +324,21 @@ console.log("\n=== UI renders correct badge ===");
   var fileChanges = codeBlocks.map(function(code, i) {
     var header = headers[i];
     var path = (header && header.path) ? header.path : file;
-    var isNew = path && file && path !== file && path.indexOf(file) === -1 && file.indexOf(path) === -1;
+    var isNew = header && header.tag === "new";
     return { path: path, isNew: isNew, code: code };
   });
 
   assertEqual(fileChanges.length, 2, "two file changes");
   assertEqual(fileChanges[0].path, "app/services/post_analytics_service.rb", "first is original file");
-  assertEqual(fileChanges[0].isNew, false, "original file is NOT new");
+  assertEqual(fileChanges[0].isNew, false, "updated file is NOT marked new");
   assertEqual(fileChanges[1].path, "app/services/engagement_scorer.rb", "second is extracted file");
-  assertEqual(fileChanges[1].isNew, true, "extracted file IS new");
+  assertEqual(fileChanges[1].isNew, true, "new file IS marked new");
 
   // Simulate badge rendering
   var badges = fileChanges.map(function(c) {
     return c.isNew ? "NEW" : null;
   });
-  assertEqual(badges[0], null, "no badge on modified file");
+  assertEqual(badges[0], null, "no badge on updated file");
   assertEqual(badges[1], "NEW", "NEW badge on new file");
 })();
 
@@ -384,12 +378,14 @@ console.log("\n=== Does not match bold .rb references in prose ===");
   assertEqual(codeBlocks.length, 2, "extracts exactly two code blocks");
   assertEqual(headers[0].path, "app/services/post_analytics_service.rb", "first header is correct");
   assertEqual(headers[1].path, "app/services/engagement_scorer.rb", "second header is correct");
+  assertEqual(headers[0].tag, "updated", "first file tagged as updated");
+  assertEqual(headers[1].tag, "new", "second file tagged as new");
 
   var file = "app/services/post_analytics_service.rb";
   var fileChanges = codeBlocks.map(function(code, i) {
     var header = headers[i];
     var path = (header && header.path) ? header.path : file;
-    var isNew = !!(path && file && path !== file && path.indexOf(file) === -1 && file.indexOf(path) === -1);
+    var isNew = header && header.tag === "new";
     return { path: path, isNew: isNew };
   });
 

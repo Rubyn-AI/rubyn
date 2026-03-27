@@ -77,6 +77,14 @@ RSpec.describe Rubyn::Context::ResponseParser do
           expect(block[:code]).not_to include("```")
         end
       end
+
+      it "tags the updated file as 'updated'" do
+        expect(blocks[0][:tag]).to eq("updated")
+      end
+
+      it "tags the new file as 'new'" do
+        expect(blocks[1][:tag]).to eq("new")
+      end
     end
 
     context "with the full production response format" do
@@ -237,6 +245,14 @@ RSpec.describe Rubyn::Context::ResponseParser do
         expect(blocks[1][:code]).to include("view_bonus")
         expect(blocks[1][:code]).to include("admin_bonus")
       end
+
+      it "tags updated file as 'updated'" do
+        expect(blocks[0][:tag]).to eq("updated")
+      end
+
+      it "tags new file as 'new'" do
+        expect(blocks[1][:tag]).to eq("new")
+      end
     end
 
     context "with backtick-wrapped path headers" do
@@ -270,6 +286,11 @@ RSpec.describe Rubyn::Context::ResponseParser do
         expect(blocks.length).to eq(2)
         expect(blocks[0][:path]).to eq("app/services/post_analytics_service.rb")
         expect(blocks[1][:path]).to eq("app/services/engagement_scorer.rb")
+      end
+
+      it "has nil tags for non-bold headers" do
+        expect(blocks[0][:tag]).to be_nil
+        expect(blocks[1][:tag]).to be_nil
       end
     end
 
@@ -384,16 +405,12 @@ RSpec.describe Rubyn::Context::ResponseParser do
         RESPONSE
       end
 
-      it "identifies the original file as modified" do
-        path = blocks[0][:path]
-        is_new = path != original_file && !path.end_with?("/#{original_file}") && !original_file.end_with?("/#{path}")
-        expect(is_new).to be false
+      it "tags the updated file as 'updated'" do
+        expect(blocks[0][:tag]).to eq("updated")
       end
 
-      it "identifies the extracted file as new" do
-        path = blocks[1][:path]
-        is_new = path != original_file && !path.end_with?("/#{original_file}") && !original_file.end_with?("/#{path}")
-        expect(is_new).to be true
+      it "tags the new file as 'new'" do
+        expect(blocks[1][:tag]).to eq("new")
       end
     end
 
