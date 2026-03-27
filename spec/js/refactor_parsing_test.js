@@ -37,8 +37,8 @@ function extractFileHeaders(text) {
     var preceding = i > 0 ? parts[i - 1] : "";
     var path = null;
 
-    // Strategy 1: Bold header
-    var boldMatch = preceding.match(/\*\*(?:(?:New|Updated|Modified)\s*(?:file)?:\s*)?([a-zA-Z0-9_\/\.\-]+\.rb)\*\*/i);
+    // Strategy 1: Bold header (requires New/Updated/Modified prefix)
+    var boldMatch = preceding.match(/\*\*(?:New|Updated|Modified)\s*(?:file)?:\s*([a-zA-Z0-9_\/\.\-]+\.rb)\*\*/i);
     if (boldMatch) path = boldMatch[1];
 
     // Strategy 2: Backtick-wrapped path
@@ -346,6 +346,55 @@ console.log("\n=== UI renders correct badge ===");
   });
   assertEqual(badges[0], null, "no badge on modified file");
   assertEqual(badges[1], "NEW", "NEW badge on new file");
+})();
+
+console.log("\n=== Does not match bold .rb references in prose ===");
+(function() {
+  var response = [
+    "**Updated file: app/services/post_analytics_service.rb**",
+    "",
+    "```ruby",
+    "class PostAnalyticsService",
+    "  def score",
+    "    EngagementScorer.new.compute",
+    "  end",
+    "end",
+    "```",
+    "",
+    "**New file: app/services/engagement_scorer.rb**",
+    "",
+    "```ruby",
+    "class EngagementScorer",
+    "  def compute",
+    "    42",
+    "  end",
+    "end",
+    "```",
+    "",
+    "**Why**",
+    "",
+    "- Extracted **app/services/engagement_scorer.rb** for single responsibility",
+    "- The **post_analytics_service.rb** is now a thin wrapper"
+  ].join("\n");
+
+  var headers = extractFileHeaders(response);
+  var codeBlocks = extractCodeBlocks(response);
+
+  assertEqual(headers.length, 2, "extracts exactly two headers, not more");
+  assertEqual(codeBlocks.length, 2, "extracts exactly two code blocks");
+  assertEqual(headers[0].path, "app/services/post_analytics_service.rb", "first header is correct");
+  assertEqual(headers[1].path, "app/services/engagement_scorer.rb", "second header is correct");
+
+  var file = "app/services/post_analytics_service.rb";
+  var fileChanges = codeBlocks.map(function(code, i) {
+    var header = headers[i];
+    var path = (header && header.path) ? header.path : file;
+    var isNew = !!(path && file && path !== file && path.indexOf(file) === -1 && file.indexOf(path) === -1);
+    return { path: path, isNew: isNew };
+  });
+
+  assertEqual(fileChanges[0].isNew, false, "updated file is NOT marked new");
+  assertEqual(fileChanges[1].isNew, true, "new file IS marked new");
 })();
 
 // ---- Summary ----
