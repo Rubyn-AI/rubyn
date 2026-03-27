@@ -60,4 +60,50 @@ RSpec.describe "Refactor", type: :request do
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end
+
+  describe "PATCH /rubyn/refactor (apply)" do
+    let(:existing_file) { "app/models/order.rb" }
+    let(:new_code) { "# frozen_string_literal: true\n\nclass Order < ApplicationRecord\n  has_many :line_items\nend\n" }
+
+    it "updates an existing file and returns 'Updated'" do
+      patch "/rubyn/refactor", params: { file: existing_file, code: new_code }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      expect(json["success"]).to be true
+      expect(json["message"]).to start_with("Updated")
+
+      full_path = Rails.root.join(existing_file)
+      expect(File.read(full_path)).to include("has_many :line_items")
+    end
+
+    it "creates a new file in a new directory and returns 'Created'" do
+      new_file = "app/services/orders/scoring_service.rb"
+      full_path = Rails.root.join(new_file)
+      FileUtils.rm_f(full_path)
+
+      patch "/rubyn/refactor", params: { file: new_file, code: "class ScoringService\nend\n" }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      expect(json["success"]).to be true
+      expect(json["message"]).to start_with("Created")
+      expect(File.exist?(full_path)).to be true
+      expect(File.read(full_path)).to include("class ScoringService")
+    ensure
+      FileUtils.rm_rf(Rails.root.join("app/services/orders"))
+    end
+
+    it "returns 400 when file path is missing" do
+      patch "/rubyn/refactor", params: { code: new_code }, as: :json
+
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it "returns 400 when code is missing" do
+      patch "/rubyn/refactor", params: { file: existing_file }, as: :json
+
+      expect(response).to have_http_status(:bad_request)
+    end
+  end
 end
