@@ -39,6 +39,8 @@ module Rubyn
           break if matches.size >= MAX_MATCHES
           next unless File.file?(file)
           next if excluded?(file)
+          next if blocked_file?(relative_path(file))
+          next if sensitive_file?(relative_path(file))
           next if binary?(file)
 
           search_in_file(file, regex, matches)

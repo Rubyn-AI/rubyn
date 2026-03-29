@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "yaml"
+
 module Rubyn
   module Tools
     class BaseTool
@@ -38,6 +40,18 @@ module Rubyn
       EXCLUDED_DIRS = %w[.git node_modules vendor/bundle vendor tmp].freeze
       DEFAULT_MAX_OUTPUT_LENGTH = 10_000
 
+      BLOCKED_FILES = %w[
+        config/master.key
+        config/credentials.yml.enc
+        config/credentials
+      ].freeze
+
+      SENSITIVE_FILES = %w[
+        .env
+      ].freeze
+
+      SECURITY_CONFIG_FILE = File.join(".rubyn", "security.yml").freeze
+
       private
 
       def excluded?(path)
@@ -55,7 +69,42 @@ module Rubyn
         expanded = File.expand_path(path, project_root)
         return error("Access denied: path is outside project root") unless expanded.start_with?(project_root)
 
+        rel = expanded.sub("#{project_root}/", "")
+        return error("Access denied: #{rel} is a protected file") if blocked_file?(rel)
+
         expanded
+      end
+
+      def blocked_file?(relative_path)
+        all_blocked = BLOCKED_FILES + security_config("blocked_files")
+        matches_any?(relative_path, all_blocked)
+      end
+
+      def sensitive_file?(relative_path)
+        all_sensitive = SENSITIVE_FILES + security_config("sensitive_files")
+        matches_any?(relative_path, all_sensitive)
+      end
+
+      def matches_any?(relative_path, patterns)
+        patterns.any? do |pattern|
+          relative_path == pattern ||
+            relative_path.start_with?("#{pattern}/") ||
+            File.fnmatch?(pattern, relative_path, File::FNM_PATHNAME)
+        end
+      end
+
+      def security_config(key)
+        @security_config ||= load_security_config
+        @security_config.fetch(key, [])
+      end
+
+      def load_security_config
+        path = File.join(project_root, SECURITY_CONFIG_FILE)
+        return {} unless File.exist?(path)
+
+        YAML.safe_load_file(path) || {}
+      rescue Psych::SyntaxError
+        {}
       end
 
       def relative_path(full_path)

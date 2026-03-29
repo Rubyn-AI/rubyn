@@ -19,8 +19,12 @@ module Rubyn
         return resolved if resolved.is_a?(Hash) && resolved[:error]
 
         return error("File not found: #{params[:path]}") unless File.exist?(resolved)
-
         return error("Not a file: #{params[:path]}") unless File.file?(resolved)
+
+        rel = relative_path(resolved)
+        if sensitive_file?(rel) && !params[:skip_sensitive_check]
+          return error("sensitive_file:#{params[:path]}")
+        end
 
         lines = File.readlines(resolved)
         total_lines = lines.length
