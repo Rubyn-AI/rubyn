@@ -3,9 +3,11 @@
 module Rubyn
   module Context
     class ResponseParser
-      BOLD_HEADER = /\*\*(New|Updated|Modified)\s*(?:file)?:\s*([a-zA-Z0-9_\/\.\-]+\.rb)\*\*/i
-      BACKTICK_PATH = /`([a-zA-Z0-9_\/\.\-]+\.rb)`\s*\z/
-      INLINE_COMMENT = /^#\s*([a-zA-Z0-9_\/\.\-]+\.rb)/
+      FILE_EXT = /[a-zA-Z0-9_\/\.\-]+\.[a-zA-Z0-9\.]+/
+      BOLD_HEADER = /\*\*(New|Updated|Modified)\s*(?:file)?:\s*(#{FILE_EXT})\*\*/i
+      BACKTICK_PATH = /`(#{FILE_EXT})`\s*\z/
+      INLINE_COMMENT = /^(?:#|<%#)\s*(#{FILE_EXT})/
+      CODE_FENCE = /```\w+\n.*?```/m
 
       def self.extract_file_blocks(response)
         new(response).extract
@@ -17,12 +19,12 @@ module Rubyn
 
       def extract
         blocks = []
-        parts = @response.split(/(```ruby\n.*?```)/m)
+        parts = @response.split(/(#{CODE_FENCE})/m)
 
         parts.each_with_index do |part, i|
-          next unless part.start_with?("```ruby\n")
+          next unless part.match?(/\A```\w+\n/)
 
-          code = part.sub(/\A```ruby\n/, "").sub(/```\z/, "")
+          code = part.sub(/\A```\w+\n/, "").sub(/```\z/, "")
           preceding = i > 0 ? parts[i - 1] : ""
           result = detect_path(preceding, code)
 
