@@ -55,7 +55,7 @@ module Rubyn
       end
 
       def submit_tool_results(conversation_id:, tool_results:, project_token:)
-        post("/api/v1/ai/agent/tool_results", {
+        post_with_recovery("/api/v1/ai/agent/tool_results", {
                conversation_id: conversation_id,
                tool_results: tool_results,
                project_token: project_token

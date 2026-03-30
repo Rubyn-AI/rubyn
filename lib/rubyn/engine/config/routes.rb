@@ -4,7 +4,8 @@ Rubyn::Engine.routes.draw do
   root to: "dashboard#index"
 
   resources :files, only: [:index]
-  resource :agent, only: %i[show create], controller: "agent"
+  # Agent is CLI-only — requires local tool execution
+  # resource :agent, only: %i[show create], controller: "agent"
   resource :refactor, only: %i[show create update], controller: "refactor"
   resource :specs, only: %i[show create], controller: "specs"
   resource :reviews, only: %i[show create], controller: "reviews"
