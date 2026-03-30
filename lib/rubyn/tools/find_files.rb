@@ -21,6 +21,7 @@ module Rubyn
         files = all_files
                 .reject { |f| excluded?(f) }
                 .select { |f| File.file?(f) }
+                .reject { |f| blocked_file?(relative_path(f)) }
                 .first(MAX_RESULTS)
                 .map { |f| relative_path(f) }
 

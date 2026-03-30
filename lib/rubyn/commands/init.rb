@@ -114,7 +114,41 @@ module Rubyn
                                              "project_token" => project.fetch("project_token"),
                                              "project_id" => project.fetch("id")
                                            })
+        write_default_security_config
         ensure_gitignore
+      end
+
+      def write_default_security_config
+        path = File.join(Dir.pwd, ".rubyn", "security.yml")
+        return if File.exist?(path)
+
+        content = <<~YAML
+          # Rubyn Security Configuration
+          #
+          # blocked_files: Files the agent can NEVER read or write.
+          #   These are hard-blocked — no confirmation prompt, just denied.
+          #
+          # sensitive_files: Files the agent can read ONLY with your approval.
+          #   You'll be prompted before the agent can access these.
+          #
+          # Patterns support exact paths and directory prefixes:
+          #   - config/master.key        (exact file)
+          #   - config/credentials       (entire directory)
+          #   - .env.*                   (glob pattern)
+
+          blocked_files:
+            - config/master.key
+            - config/credentials.yml.enc
+            - config/credentials
+
+          sensitive_files:
+            - .env
+            - .env.*
+            - config/database.yml
+            - config/secrets.yml
+        YAML
+
+        File.write(path, content)
       end
 
       def ensure_gitignore

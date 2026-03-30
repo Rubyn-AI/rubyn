@@ -28,7 +28,20 @@ module Rubyn
           return { success: false, error: "denied_by_user" }
         end
 
-        tool.call(params)
+        result = tool.call(params)
+
+        if result.is_a?(Hash) && result[:error].to_s.start_with?("sensitive_file:")
+          file = result[:error].sub("sensitive_file:", "")
+          Rubyn::Output::Formatter.warning("Agent wants to read sensitive file: #{file}")
+          print "Allow? (y/n) "
+          if $stdin.gets&.strip&.downcase == "y"
+            tool.call(params.merge(skip_sensitive_check: true))
+          else
+            { success: false, error: "denied_by_user" }
+          end
+        else
+          result
+        end
       rescue StandardError => e
         { success: false, error: "#{e.class}: #{e.message}" }
       end

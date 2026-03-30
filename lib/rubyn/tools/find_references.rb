@@ -28,6 +28,7 @@ module Rubyn
         rb_files.each do |file|
           break if references.size >= MAX_RESULTS
           next if excluded?(file)
+          next if blocked_file?(relative_path(file))
 
           search_file_for_references(file, regex, references)
         end
