@@ -3,6 +3,7 @@
 require "faraday"
 require "faraday/multipart"
 require "json"
+require "securerandom"
 
 module Rubyn
   module Client
@@ -19,7 +20,7 @@ module Rubyn
       end
 
       def refactor(file_path:, code:, context_files:, project_token:)
-        post("/api/v1/ai/refactor", {
+        post_with_recovery("/api/v1/ai/refactor", {
                file_path: file_path,
                code: code,
                context_files: context_files,
@@ -28,7 +29,7 @@ module Rubyn
       end
 
       def generate_spec(file_path:, code:, context_files:, project_token:)
-        post("/api/v1/ai/spec", {
+        post_with_recovery("/api/v1/ai/spec", {
                file_path: file_path,
                code: code,
                context_files: context_files,
@@ -37,7 +38,7 @@ module Rubyn
       end
 
       def review(files:, context_files:, project_token:)
-        post("/api/v1/ai/review", {
+        post_with_recovery("/api/v1/ai/review", {
                files: files,
                context_files: context_files,
                project_token: project_token
@@ -45,7 +46,7 @@ module Rubyn
       end
 
       def agent_message(conversation_id:, message:, file_context:, project_token:)
-        post("/api/v1/ai/agent", {
+        post_with_recovery("/api/v1/ai/agent", {
                conversation_id: conversation_id,
                message: message,
                file_context: file_context,
@@ -99,6 +100,10 @@ module Rubyn
         get("/api/v1/usage/history", page: page)
       end
 
+      def fetch_interaction(request_uuid:)
+        get("/api/v1/ai/interactions/#{request_uuid}")
+      end
+
       def submit_feedback(interaction_id:, rating:, feedback: nil)
         post("/api/v1/feedback", {
                interaction_id: interaction_id,
@@ -137,6 +142,49 @@ module Rubyn
         parse_response(response)
       rescue Faraday::ConnectionFailed, Faraday::TimeoutError => e
         raise APIError, "Could not connect to #{@base_url} — #{e.message}"
+      end
+
+      def post_with_recovery(path, body = {})
+        request_uuid = SecureRandom.uuid
+        body[:request_uuid] = request_uuid
+
+        response = connection.post(path, body)
+        parse_response(response)
+      rescue Faraday::TimeoutError
+        recover_response(request_uuid)
+      rescue Faraday::ConnectionFailed => e
+        raise APIError, "Could not connect to #{@base_url} — #{e.message}"
+      end
+
+      RECOVERY_MESSAGES = [
+        "Still polishing those gems...",
+        "Matz would want us to be patient...",
+        "DHH didn't build Rails in a day...",
+        "Optimizing for developer happiness...",
+        "Almost there, just one more .each...",
+        "Your code is worth the wait..."
+      ].freeze
+
+      def recover_response(request_uuid)
+        Rubyn::Output::Formatter.newline
+        Rubyn::Output::Formatter.warning("Hang tight! Your response is still cooking...")
+
+        RECOVERY_MESSAGES.each do |message|
+          sleep 5
+          begin
+            result = fetch_interaction(request_uuid: request_uuid)
+            if result && result["response"].to_s.length > 0
+              Rubyn::Output::Formatter.success("Got it!")
+              Rubyn::Output::Formatter.newline
+              return result
+            end
+          rescue APIError => e
+            break if e.message.include?("not found")
+          end
+          Rubyn::Output::Formatter.info(message)
+        end
+
+        raise APIError, "Request timed out and the response could not be recovered. Your credits were not charged."
       end
 
       def parse_response(response)
