@@ -16,16 +16,17 @@ module Rubyn
       MAX_FILE_SIZE = 2_000_000
 
       def execute(params)
-        return error("Missing required parameter: pattern") unless params[:pattern]
+        query = params[:pattern] || params[:query]
+        return error("Missing required parameter: pattern") unless query
 
         begin
-          regex = Regexp.new(params[:pattern])
+          regex = Regexp.new(query)
         rescue RegexpError => e
           return error("Invalid regex pattern: #{e.message}")
         end
 
         search_path = params[:path] || "."
-        file_pattern = params[:file_pattern]
+        file_pattern = params[:file_pattern] || params[:include]
 
         resolved = resolve_path(search_path)
         return resolved if resolved.is_a?(Hash) && resolved[:error]
