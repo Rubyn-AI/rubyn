@@ -414,6 +414,115 @@ RSpec.describe Rubyn::Context::ResponseParser do
       end
     end
 
+    context "with multi-file response including ERB views" do
+      let(:response) do
+        <<~RESPONSE
+          ## Summary
+
+          This is a `PostsController` handling CRUD operations for blog posts.
+
+          **Updated file: app/controllers/posts_controller.rb**
+
+          ```ruby
+          # frozen_string_literal: true
+
+          class PostsController < ApplicationController
+            before_action :set_post, only: %i[show edit update destroy publish]
+
+            def index
+              @posts = Post.all
+            end
+          end
+          ```
+
+          **New file: app/services/posts/create_service.rb**
+
+          ```ruby
+          # frozen_string_literal: true
+
+          module Posts
+            class CreateService
+              def self.call(params)
+                new(params).call
+              end
+            end
+          end
+          ```
+
+          **Updated file: app/models/post.rb**
+
+          ```ruby
+          # frozen_string_literal: true
+
+          class Post < ApplicationRecord
+            belongs_to :user
+            has_many :comments, dependent: :destroy
+          end
+          ```
+
+          **Updated file: app/models/user.rb**
+
+          ```ruby
+          # frozen_string_literal: true
+
+          class User < ApplicationRecord
+            has_many :posts
+            has_many :comments
+          end
+          ```
+
+          **New file: app/views/posts/index.html.erb**
+
+          ```erb
+          <h1>Posts</h1>
+
+          <ul>
+          <% @posts.each do |post| %>
+          <li><%= link_to post.title, post %> - by <%= post.user.name %></li>
+          <% end %>
+          </ul>
+          ```
+
+          **Why**
+
+          - Extracted service object for creation logic
+          - Added view template for index
+        RESPONSE
+      end
+
+      it "extracts all five file blocks including the ERB view" do
+        expect(blocks.length).to eq(5)
+      end
+
+      it "identifies the ERB view path" do
+        expect(blocks[4][:path]).to eq("app/views/posts/index.html.erb")
+      end
+
+      it "tags the ERB view as new" do
+        expect(blocks[4][:tag]).to eq("new")
+      end
+
+      it "extracts the ERB content without fences" do
+        expect(blocks[4][:code]).to include("<%= link_to post.title, post %>")
+        expect(blocks[4][:code]).not_to include("```")
+      end
+
+      it "still correctly identifies all Ruby files" do
+        expect(blocks[0][:path]).to eq("app/controllers/posts_controller.rb")
+        expect(blocks[1][:path]).to eq("app/services/posts/create_service.rb")
+        expect(blocks[2][:path]).to eq("app/models/post.rb")
+        expect(blocks[3][:path]).to eq("app/models/user.rb")
+      end
+
+      it "tags updated and new files correctly" do
+        expect(blocks[0][:tag]).to eq("updated")
+        expect(blocks[1][:tag]).to eq("new")
+        expect(blocks[2][:tag]).to eq("updated")
+        expect(blocks[3][:tag]).to eq("updated")
+        expect(blocks[4][:tag]).to eq("new")
+      end
+    end
+
     context "does not match bold .rb references in prose" do
       let(:response) do
         <<~RESPONSE

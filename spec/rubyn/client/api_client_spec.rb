@@ -147,5 +147,35 @@ RSpec.describe Rubyn::Client::ApiClient do
 
       expect { client.get_balance }.to raise_error(Rubyn::APIError)
     end
+
+    it "raises APIError when server returns HTML instead of JSON" do
+      html_body = <<~HTML
+        <h1>Posts</h1>
+        <ul>
+        <% @posts.each do |post| %>
+        <li><%= link_to post.title, post %> - by <%= post.user.name %></li>
+        <% end %>
+        </ul>
+      HTML
+
+      stub_request(:get, "https://api.rubyn.dev/api/v1/usage/balance")
+        .to_return(status: 200, body: html_body, headers: { "Content-Type" => "text/html" })
+
+      expect { client.get_balance }.to raise_error(Rubyn::APIError, /Expected JSON/)
+    end
+
+    it "raises APIError on connection failure" do
+      stub_request(:get, "https://api.rubyn.dev/api/v1/usage/balance")
+        .to_raise(Faraday::ConnectionFailed.new("Connection refused"))
+
+      expect { client.get_balance }.to raise_error(Rubyn::APIError, /Could not connect/)
+    end
+
+    it "raises APIError on timeout" do
+      stub_request(:get, "https://api.rubyn.dev/api/v1/usage/balance")
+        .to_raise(Faraday::TimeoutError)
+
+      expect { client.get_balance }.to raise_error(Rubyn::APIError, /Could not connect/)
+    end
   end
 end
