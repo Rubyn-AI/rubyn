@@ -45,6 +45,16 @@ module Rubyn
              })
       end
 
+      def pr_review(files:, context_files:, diffs:, base_branch:, project_token:)
+        post_with_recovery("/api/v1/ai/pr_review", {
+               files: files,
+               context_files: context_files,
+               diffs: diffs,
+               base_branch: base_branch,
+               project_token: project_token
+             })
+      end
+
       def agent_message(conversation_id:, message:, file_context:, project_token:)
         post_with_recovery("/api/v1/ai/agent", {
                conversation_id: conversation_id,

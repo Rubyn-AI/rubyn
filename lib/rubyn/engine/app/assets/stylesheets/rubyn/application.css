@@ -1077,3 +1077,44 @@ code {
     border-bottom: 1px solid var(--rubyn-border-subtle);
   }
 }
+
+/* PR Review */
+.rubyn-pr-summary { padding: 0.5rem 0; }
+.rubyn-pr-summary p { margin: 0.25rem 0; color: var(--rubyn-text-dim); }
+.rubyn-pr-summary strong { color: var(--rubyn-text); }
+
+.rubyn-pr-file-list { margin-top: 0.75rem; }
+
+.rubyn-pr-file-entry {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--rubyn-text-dim);
+}
+
+.rubyn-pr-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.rubyn-pr-status--modified { background: var(--rubyn-warning); color: #000; }
+.rubyn-pr-status--added { background: var(--rubyn-success); color: #000; }
+.rubyn-pr-status--deleted { background: var(--rubyn-primary); color: #fff; }
+.rubyn-pr-status--renamed { background: #6366f1; color: #fff; }
+.rubyn-pr-status--binary { background: var(--rubyn-text-muted); color: #000; }
+
+.rubyn-tool-error {
+  padding: 1rem;
+  color: var(--rubyn-primary);
+  background: rgba(204, 52, 45, 0.1);
+  border-radius: 6px;
+}

@@ -1,0 +1,58 @@
+<% content_for(:title) { "PR Review" } %>
+
+<div class="rubyn-page-header">
+  <h1>PR Review</h1>
+  <p>AI-powered review of your changes before opening a pull request</p>
+</div>
+
+<div class="rubyn-tool-container">
+  <div class="rubyn-tool-header">
+    <span class="rubyn-tool-filepath">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v18"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+      PR Review
+    </span>
+  </div>
+
+  <% if @diff_info && @diff_info[:error] %>
+    <div class="rubyn-tool-body">
+      <div class="rubyn-tool-error">
+        <p><%= @diff_info[:error] %></p>
+      </div>
+    </div>
+  <% elsif @diff_info && @diff_info[:files]&.any? %>
+    <div class="rubyn-tool-body" id="pr-review-info">
+      <div class="rubyn-pr-summary">
+        <p><strong>Base:</strong> <%= @diff_info[:base_branch] %></p>
+        <p><strong>Changes:</strong> <%= @diff_info[:summary] %></p>
+        <div class="rubyn-pr-file-list">
+          <% @diff_info[:files].each do |file| %>
+            <div class="rubyn-pr-file-entry">
+              <span class="rubyn-pr-status rubyn-pr-status--<%= file[:status] %>">
+                <%= { "modified" => "M", "added" => "A", "deleted" => "D", "renamed" => "R", "binary" => "B" }[file[:status]] || "?" %>
+              </span>
+              <%= file[:path] %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <div class="rubyn-tool-actions" style="margin-top: 1rem;">
+        <button class="rubyn-btn rubyn-btn--primary" id="run-pr-review-btn" data-base="<%= @diff_info[:base_branch] %>">
+          Run PR Review
+        </button>
+      </div>
+    </div>
+    <div class="rubyn-tool-body" id="pr-review-container" style="display: none;">
+      <div class="rubyn-loading">
+        <span class="rubyn-spinner"></span>
+        Reviewing changes<span class="rubyn-dots"><span></span><span></span><span></span></span>
+      </div>
+    </div>
+  <% else %>
+    <div class="rubyn-tool-body">
+      <div class="rubyn-tool-empty">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <p>No changes detected. Make some changes and come back.</p>
+      </div>
+    </div>
+  <% end %>
+</div>

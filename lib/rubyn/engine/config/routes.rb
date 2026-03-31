@@ -9,6 +9,7 @@ Rubyn::Engine.routes.draw do
   resource :refactor, only: %i[show create update], controller: "refactor"
   resource :specs, only: %i[show create], controller: "specs"
   resource :reviews, only: %i[show create], controller: "reviews"
+  resource :pr_reviews, only: %i[show create], controller: "pr_reviews"
   resource :settings, only: %i[show update], controller: "settings"
   post "feedback", to: "feedback#create"
 end
