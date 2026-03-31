@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rubyn (0.1.6)
+    rubyn (0.1.8)
       faraday (>= 1.0, < 3.0)
       faraday-multipart (~> 1.0)
       pastel (>= 0.8, < 1.0)
