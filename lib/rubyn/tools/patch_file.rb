@@ -22,18 +22,21 @@ module Rubyn
         return error("File not found: #{params[:path]}") unless File.exist?(resolved)
 
         content = File.read(resolved)
-        find = params[:find]
+        find = params[:find] || params[:old_text]
+        replace = params[:replace] || params[:new_text]
 
+        return error("Missing find/old_text parameter") unless find
+        return error("Missing replace/new_text parameter") unless replace
         return error("Find string not found in file: #{params[:path]}") unless content.include?(find)
 
         all_occurrences = params[:all_occurrences] || false
 
         if all_occurrences
           replacements = content.scan(find).length
-          new_content = content.gsub(find, params[:replace])
+          new_content = content.gsub(find, replace)
         else
           replacements = 1
-          new_content = content.sub(find, params[:replace])
+          new_content = content.sub(find, replace)
         end
 
         File.write(resolved, new_content)

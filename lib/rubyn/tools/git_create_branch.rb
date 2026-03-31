@@ -17,7 +17,7 @@ module Rubyn
       VALID_BRANCH_PATTERN = %r{\A[a-zA-Z0-9\-_/]+\z}
 
       def execute(params)
-        branch_name = params[:branch_name]
+        branch_name = params[:branch_name] || params[:name]
         return error("branch_name is required") unless branch_name && !branch_name.strip.empty?
 
         unless branch_name.match?(VALID_BRANCH_PATTERN)
