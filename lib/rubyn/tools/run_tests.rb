@@ -18,7 +18,10 @@ module Rubyn
         command = detect_test_command
         return error("No test framework detected (no spec/ or test/ directory found)") unless command
 
-        command = "#{command} #{params[:path]}" if params[:path] && !params[:path].strip.empty?
+        # Accept both gem params (path) and API params (files array)
+        test_path = params[:path]
+        test_path ||= Array(params[:files]).join(" ") if params[:files]
+        command = "#{command} #{test_path}" if test_path && !test_path.strip.empty?
         command = "#{command} #{params[:options]}" if params[:options] && !params[:options].strip.empty?
 
         begin
