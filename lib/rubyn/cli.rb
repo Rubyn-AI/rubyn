@@ -57,6 +57,13 @@ module Rubyn
       Commands::Agent.new.execute
     end
 
+    desc "pr", "Review your changes before opening a pull request"
+    option :base, type: :string, default: nil, desc: "Base branch to compare against (default: main or master)"
+    def pr
+      require_relative "commands/pr"
+      Commands::Pr.new.execute(base: options[:base])
+    end
+
     # desc "analyse", "Analyse your codebase for enhanced AI context"
     # option :force, type: :boolean, default: false, desc: "Re-analyse all files, not just changed ones"
     # def analyse

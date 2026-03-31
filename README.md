@@ -178,6 +178,7 @@ rubyn dashboard
 | `rubyn refactor <file>` | Refactor a file toward best practices |
 | `rubyn spec <file>` | Generate tests for a file |
 | `rubyn review <file_or_dir>` | Review code for anti-patterns |
+| `rubyn pr` | Review your changes before opening a pull request |
 | `rubyn agent` | Start an interactive conversation |
 | `rubyn usage` | Show credit balance and recent usage |
 | `rubyn config [key] [value]` | View or set configuration |

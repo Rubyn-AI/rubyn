@@ -94,6 +94,15 @@ module WebmockStubs
       )
   end
 
+  def stub_streaming_pr_review(content: "pr review findings", credits_used: 3)
+    stub_request(:post, "#{API_BASE}/api/v1/ai/pr_review")
+      .to_return(
+        status: 200,
+        body: { response: content, credits_used: credits_used, model: "claude-haiku-4-5" }.to_json,
+        headers: { "Content-Type" => "application/json" }
+      )
+  end
+
   def stub_streaming_agent(content: "agent response", credits_used: 2, conversation_id: 1)
     stub_request(:post, "#{API_BASE}/api/v1/ai/agent")
       .to_return(

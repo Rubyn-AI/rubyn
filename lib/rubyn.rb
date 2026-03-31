@@ -14,6 +14,7 @@ module Rubyn
   class AuthenticationError < Error; end
   class ConfigurationError < Error; end
   class APIError < Error; end
+  class GitError < Error; end
 
   class Configuration
     attr_accessor :api_url, :api_key
@@ -54,6 +55,7 @@ require_relative "rubyn/context/context_builder"
 require_relative "rubyn/context/codebase_indexer"
 require_relative "rubyn/context/response_parser"
 require_relative "rubyn/context/file_applier"
+require_relative "rubyn/git/branch_diff"
 require_relative "rubyn/output/formatter"
 require_relative "rubyn/output/diff_renderer"
 require_relative "rubyn/output/spinner"
@@ -91,6 +93,7 @@ require_relative "rubyn/commands/index"
 require_relative "rubyn/commands/usage"
 require_relative "rubyn/commands/config"
 require_relative "rubyn/commands/dashboard"
+require_relative "rubyn/commands/pr"
 require_relative "rubyn/cli"
 
 # Load Rails engine when running inside a Rails app
