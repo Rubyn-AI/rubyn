@@ -37,9 +37,6 @@ module Rubyn
 
         formatter.newline
         formatter.info("Session ended.")
-      rescue Interrupt
-        formatter.newline
-        formatter.info("Session ended.")
       end
 
       private
