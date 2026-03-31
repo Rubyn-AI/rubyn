@@ -85,6 +85,10 @@ module Rubyn
 
         formatter.info("Authenticated as: #{result.dig("user", "email")}")
         formatter.info("Plan: #{result.dig("user", "plan")}")
+
+        if result.dig("user", "organization_name")
+          formatter.info("Team: #{result.dig("user", "organization_name")}")
+        end
       rescue Rubyn::AuthenticationError
         spinner.stop_error("Invalid!")
         formatter.error("API key is invalid. Get your key at https://rubyn.dev/settings")
